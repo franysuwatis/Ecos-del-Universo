@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ecos del Universo: Sonificación de Cuerpos Celestes</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background-color: #0b0d17; color: white; }
+        .container { margin-top: 50px; }
+        input { padding: 10px; border-radius: 5px; border: none; }
+        button { padding: 10px 20px; background-color: #1a73e8; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+        .result-box { margin-top: 30px; padding: 20px; border: 1px solid #444; display: inline-block; background: #161b22; border-radius: 10px; }
+        .list-container { max-height: 200px; overflow-y: auto; text-align: left; background: #0d1117; padding: 10px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ecos del Universo: Sonificación de ALeRCE</h1>
+        <p>Entendiendo el universo a través del sonido.</p>
+
+        <form method="POST">
+            {% csrf_token %} <!-- ¡IMPORTANTE! Seguridad de Django para formularios -->
+            <input type="text" name="oid_busqueda" placeholder="Ej: ZTF18accvamy" required>
+            <button type="submit">Generar Sonido</button>
+        </form>
+
+        <!-- Solo mostramos esto si hay un ID de astro (oid) procesado -->
+        {% if oid %}
+        <div class="result-box">
+            <h2>Resultados para: {{ oid }}</h2>
+            
+            <img src="data:image/png;base64,{{ grafico }}" alt="Curva de luz" style="max-width: 100%; border-radius: 5px;">
+
+            <h3>Melodía del Astro:</h3>
+            <button id="btn-play" style="background-color: #28a745;">▶ Reproducir Sonificación</button>
+            
+            <div class="list-container">
+                <ul style="list-style: none; padding: 0;">
+                    {% for nota in frecuencias %}
+                        <li>Frecuencia: {{ nota|floatformat:2 }} Hz</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- SCRIPT PARA EL SONIDO -->
+        <script>
+            // Pasamos la lista de Python a JavaScript de forma segura
+            const frecuencias = {{ frecuencias|default:"[]"|safe }};
+
+            async function tocarMusica() {
+                const context = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Usamos un bucle para recorrer cada nota de la lista [2, 3]
+                for (const f of frecuencias) {
+                    const osc = context.createOscillator();
+                    const gain = context.createGain();
+                    
+                    osc.frequency.value = f;
+                    osc.type = "sine"; 
+                    
+                    osc.connect(gain);
+                    gain.connect(context.destination);
+                    
+                    osc.start();
+                    // Duración de la nota (0.2 segundos para que sea una melodía rápida)
+                    gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.2);
+                    osc.stop(context.currentTime + 0.2);
+                    
+                    // Esperamos un momento antes de la siguiente nota
+                    await new Promise(r => setTimeout(r, 150));
+                }
+            }
+
+            document.getElementById('btn-play').onclick = tocarMusica;
+        </script>
+        {% endif %}
+    </div>
+</body>
+</html>
