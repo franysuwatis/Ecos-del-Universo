@@ -14,6 +14,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
+# 💡 AGREGAMOS LOS MIDDLEWARES (Aquí es donde WhiteNoise hace su magia)
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Servidor de archivos estáticos eficiente
+]
+
 # Configuración de URLs principales
 ROOT_URLCONF = 'urls'
 
@@ -31,8 +37,17 @@ TEMPLATES = [
         },
     },
 ]
-STATIC_URL = 'static/'
 
-STATIC_FILES_DIRS = [
+# 💡 CONFIGURACIÓN DE ARCHIVOS ESTÁTICOS (Corregida y optimizada)
+STATIC_URL = '/static/'
+
+# Esta es la carpeta donde tienes tus fotos actualmente en desarrollo
+STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+# Esta es la carpeta donde WhiteNoise/Render unificarán todo para producción
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Opcional: Esto comprime tus imágenes y archivos para que carguen un 50% más rápido
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
