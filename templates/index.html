@@ -1,73 +1,316 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Ecos del Universo: Sonificación de Cuerpos Celestes</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; background-color: #0b0d17; color: white; }
-        .container { margin-top: 50px; }
-        input { padding: 10px; border-radius: 5px; border: none; }
-        button { padding: 10px 20px; background-color: #1a73e8; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; }
-        .result-box { margin-top: 30px; padding: 20px; border: 1px solid #444; display: inline-block; background: #161b22; border-radius: 10px; }
-        .list-container { max-height: 200px; overflow-y: auto; text-align: left; background: #0d1117; padding: 10px; border-radius: 5px; }
+        /* Estilos generales con Space Grotesk */
+        body { 
+            font-family: 'Space Grotesk', sans-serif; 
+            text-align: center; 
+            background-color: #0a0f24;
+            color: white; 
+            margin: 0;
+            padding: 0;
+            position: relative;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Efecto de cielo estrellado con CSS */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.8;
+            background-image: 
+                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
+                radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px);
+            background-size: 550px 550px, 350px 350px, 250px 250px;
+            background-position: 0 0, 40px 60px, 130px 270px;
+        }
+
+        .container { padding: 50px 20px; max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+        
+        /* Título en blanco brillante con efecto Glow */
+        h1 {
+            font-weight: 700;
+            font-size: 2.8em;
+            color: #ffffff;
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 
+                         0 0 20px rgba(99, 102, 241, 0.5), 
+                         0 0 30px rgba(99, 102, 241, 0.3);
+        }
+
+        p.subtitulo {
+            color: #a5b4fc; 
+            font-size: 1.15em;
+            font-weight: 400;
+            margin-top: 0;
+            margin-bottom: 30px;
+        }
+
+        /* Buscador estilizado */
+        input { 
+            padding: 12px 20px; 
+            border-radius: 25px; 
+            border: 1px solid #312e81; 
+            background-color: #111827;
+            color: white;
+            font-size: 1em;
+            font-family: 'Space Grotesk', sans-serif;
+            width: 280px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
+        }
+        button.btn-buscar { 
+            padding: 12px 25px; 
+            background-color: #4f46e5; 
+            color: white; 
+            border: none; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            font-size: 1em;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 500;
+            margin-left: 10px;
+            transition: background 0.3s, transform 0.2s;
+        }
+        button.btn-buscar:hover { 
+            background-color: #4338ca; 
+            transform: scale(1.03);
+        }
+
+        /* Tarjetas de Ejemplos en cuadrícula (4 columnas) */
+        .ejemplos-section { margin-top: 50px; }
+        .ejemplos-section h3 { font-size: 1.4em; color: #a5b4fc; margin-bottom: 25px; }
+        .ejemplos-grid { 
+            display: flex; 
+            justify-content: center; 
+            gap: 20px; 
+            flex-wrap: wrap; 
+        }
+        .card-ejemplo {
+            background: rgba(17, 24, 39, 0.85);
+            border: 1px solid #1e1b4b;
+            border-radius: 15px;
+            width: 220px;
+            cursor: pointer;
+            overflow: hidden;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .card-ejemplo:hover {
+            transform: translateY(-8px);
+            border-color: #6366f1;
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+            background: rgba(30, 27, 75, 0.9);
+        }
+        
+        /* Imagen dentro de cada tarjeta */
+        .card-img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-bottom: 1px solid #1e1b4b;
+        }
+
+        .card-content {
+            padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-ejemplo h4 { margin: 0 0 8px 0; color: #818cf8; font-size: 1.15em; }
+        .card-ejemplo p { margin: 0 0 15px 0; font-size: 0.85em; color: #9ca3af; line-height: 1.4; flex-grow: 1; }
+        .card-ejemplo .id-tag { font-family: monospace; background: #030712; padding: 4px 8px; border-radius: 6px; color: #c084fc; font-weight: bold; font-size: 0.85em; display: inline-block; margin-top: auto; }
+
+        /* Caja de Resultados */
+        .result-box { 
+            margin-top: 40px; 
+            padding: 25px; 
+            border: 1px solid #1e1b4b; 
+            display: inline-block; 
+            background: rgba(17, 24, 39, 0.9); 
+            border-radius: 15px; 
+            width: 90%; 
+            max-width: 850px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+
+        /* Botón de limpiar y volver */
+        .btn-volver {
+            background-color: transparent;
+            border: 1px solid #4f46e5;
+            color: #818cf8;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 25px;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+        .btn-volver:hover {
+            background-color: #4f46e5;
+            color: white;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Ecos del Universo: Sonificación de ALeRCE</h1>
-        <p>Entendiendo el universo a través del sonido.</p>
+        <p class="subtitulo">Escucha la luz de las estrellas y entendamos el cosmos a través del sonido.</p>
 
-        <form method="POST">
-            {% csrf_token %} <!-- ¡IMPORTANTE! Seguridad de Django para formularios -->
-            <input type="text" name="oid_busqueda" placeholder="Ej: ZTF18accvamy" required>
-            <button type="submit">Generar Sonido</button>
+        <form method="POST" id="form-busqueda" style="margin-top: 30px;">
+            {% csrf_token %}
+            <input type="text" id="oid_input" name="oid_busqueda" placeholder="Busca un objeto (Ej: ZTF18accvamy)" required>
+            <button type="submit" class="btn-buscar">Generar Sonido</button>
         </form>
 
-        <!-- Solo mostramos esto si hay un ID de astro (oid) procesado -->
+        {% if not oid %}
+        <div class="ejemplos-section">
+            <h3>¿No sabes qué ID buscar? Elige un astro de ejemplo:</h3>
+            <div class="ejemplos-grid">
+                
+                <div class="card-ejemplo" onclick="buscarEjemplo('ZTF18aawaisa')">
+                    <img src="{% static 'images/cep.jpg' %}" alt="Estrella Cep" class="card-img">
+                    <div class="card-content">
+                        <h4>Estrella Cefeida</h4>
+                        <p>Estrella supergigante pulsante cuyo brillo cambia de forma rítmica y regular.</p>
+                        <span class="id-tag">ZTF18aawaisa</span>
+                    </div>
+                </div>
+
+                <div class="card-ejemplo" onclick="buscarEjemplo('ZTF18aajteux')">
+                    <img src="{% static 'images/rrl.jpg' %}" alt="Estrella RRL" class="card-img">
+                    <div class="card-content">
+                        <h4>Estrella RR Lyrae</h4>
+                        <p>Estrella variable pulsante, anciana, cuyo brillo cambia de forma rítmica en períodos muy cortos.</p>
+                        <span class="id-tag">ZTF18aajteux</span>
+                    </div>
+                </div>
+
+                <div class="card-ejemplo" onclick="buscarEjemplo('ZTF20acphdcg')">
+                    <img src="{% static 'images/slsn.jpg' %}" alt="Supernova Superluminosa" class="card-img">
+                    <div class="card-content">
+                        <h4>Supernova Superluminosa</h4>
+                        <p>Explosión estelar extremadamente brillante y violenta que puede superar el brillo de una galaxia completa.</p>
+                        <span class="id-tag">ZTF20acphdcg</span>
+                    </div>
+                </div>
+
+                <div class="card-ejemplo" onclick="buscarEjemplo('ZTF18acwyopw')">
+                    <img src="{% static 'images/qso.jpg' %}" alt="Cuásar" class="card-img">
+                    <div class="card-content">
+                        <h4>Cuásar</h4>
+                        <p>Objeto astronómico extremadamente brillante y distante, alimentado por un agujero negro supermasivo.</p>
+                        <span class="id-tag">ZTF18acwyopw</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        {% endif %}
+
         {% if oid %}
         <div class="result-box">
             <h2>Resultados para: {{ oid }}</h2>
             
-            <img src="data:image/png;base64,{{ grafico }}" alt="Curva de luz" style="max-width: 100%; border-radius: 5px;">
+            <img src="data:image/png;base64,{{ grafico }}" alt="Curva de luz" style="max-width: 100%; border-radius: 8px; margin-bottom: 20px; border: 1px solid #1e1b4b;">
 
-            <h3>Melodía del Astro:</h3>
-            <button id="btn-play" style="background-color: #28a745;">▶ Reproducir Sonificación</button>
-            
-            <div class="list-container">
-                <ul style="list-style: none; padding: 0;">
-                    {% for nota in frecuencias %}
-                        <li>Frecuencia: {{ nota|floatformat:2 }} Hz</li>
-                    {% endfor %}
-                </ul>
-            </div>
+            <h3>Melodía del Cuerpo Celeste:</h3>
+            <button id="btn-play" style="background-color: #10b981; font-size: 1.1em; border: none; padding: 12px 25px; border-radius: 25px; color: white; cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-weight: bold; transition: background 0.3s;">▶ Reproducir Sonificación</button>
+            <br>
+            <a href="/" class="btn-volver">Realizar otra búsqueda (Limpiar)</a>
         </div>
 
-        <!-- SCRIPT PARA EL SONIDO -->
         <script>
-            // Pasamos la lista de Python a JavaScript de forma segura
-            const frecuencias = {{ frecuencias|default:"[]"|safe }};
+            const volumenesDb = {{ frecuencias|default:"[]"|safe }};
+            let audioCtx = null;
+            let estaReproduciendo = false;
+            let pausarSolicitado = false;
+            let indiceActual = 0;
+
+            function dbToAmp(db) {
+                return Math.pow(10, db / 20);
+            }
 
             async function tocarMusica() {
-                const context = new (window.AudioContext || window.webkitAudioContext)();
-                
-                // Usamos un bucle para recorrer cada nota de la lista [2, 3]
-                for (const f of frecuencias) {
-                    const osc = context.createOscillator();
-                    const gain = context.createGain();
+                if (estaReproduciendo) {
+                    pausarSolicitado = true;
+                    return;
+                }
+
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+
+                estaReproduciendo = true;
+                pausarSolicitado = false;
+                const boton = document.getElementById('btn-play');
+                boton.innerText = "⏸ Pausar Sonificación";
+                boton.style.backgroundColor = "#ef4444";
+
+                if (indiceActual >= volumenesDb.length) {
+                    indiceActual = 0;
+                }
+
+                for (let i = indiceActual; i < volumenesDb.length; i++) {
+                    if (pausarSolicitado) {
+                        indiceActual = i;
+                        break;
+                    }
+
+                    const db = volumenesDb[i];
+                    const volumenLineal = dbToAmp(db);
+
+                    const osc = audioCtx.createOscillator();
+                    const gainNode = audioCtx.createGain();
                     
-                    osc.frequency.value = f;
+                    osc.frequency.value = 440; 
                     osc.type = "sine"; 
                     
-                    osc.connect(gain);
-                    gain.connect(context.destination);
+                    osc.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+                    
+                    gainNode.gain.setValueAtTime(volumenLineal, audioCtx.currentTime);
                     
                     osc.start();
-                    // Duración de la nota (0.2 segundos para que sea una melodía rápida)
-                    gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.2);
-                    osc.stop(context.currentTime + 0.2);
+                    gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.15);
+                    osc.stop(audioCtx.currentTime + 0.15);
                     
-                    // Esperamos un momento antes de la siguiente nota
-                    await new Promise(r => setTimeout(r, 150));
+                    await new Promise(r => setTimeout(r, 120));
+                }
+
+                estaReproduciendo = false;
+                boton.innerText = "▶ Reproducir Sonificación";
+                boton.style.backgroundColor = "#10b981";
+
+                if (!pausarSolicitado) {
+                    indiceActual = volumenesDb.length;
                 }
             }
 
@@ -75,5 +318,12 @@
         </script>
         {% endif %}
     </div>
+
+    <script>
+        function buscarEjemplo(idAstro) {
+            document.getElementById('oid_input').value = idAstro;
+            document.getElementById('form-busqueda').submit();
+        }
+    </script>
 </body>
 </html>
