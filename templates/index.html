@@ -3,6 +3,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ecos del Universo: Sonificación de Cuerpos Celestes</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -41,12 +42,19 @@
             background-position: 0 0, 40px 60px, 130px 270px;
         }
 
-        .container { padding: 50px 20px; max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+        .container { 
+            padding: 40px 20px; 
+            max-width: 1100px; 
+            margin: 0 auto; 
+            position: relative; 
+            z-index: 1; 
+            box-sizing: border-box;
+        }
         
-        /* Título en blanco brillante con efecto Glow */
+        /* Título adaptativo con efecto Glow */
         h1 {
             font-weight: 700;
-            font-size: 2.8em;
+            font-size: 2.5rem;
             color: #ffffff;
             margin-bottom: 5px;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 
@@ -56,24 +64,35 @@
 
         p.subtitulo {
             color: #a5b4fc; 
-            font-size: 1.15em;
+            font-size: 1.1rem;
             font-weight: 400;
             margin-top: 0;
             margin-bottom: 30px;
         }
 
-        /* Buscador estilizado */
+        /* Buscador adaptativo */
+        .search-box {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
         input { 
             padding: 12px 20px; 
             border-radius: 25px; 
             border: 1px solid #312e81; 
             background-color: #111827;
             color: white;
-            font-size: 1em;
+            font-size: 1rem;
             font-family: 'Space Grotesk', sans-serif;
             width: 280px;
+            max-width: 100%;
             outline: none;
             transition: all 0.3s ease;
+            box-sizing: border-box;
         }
         input:focus {
             border-color: #6366f1;
@@ -86,10 +105,9 @@
             border: none; 
             border-radius: 25px; 
             cursor: pointer; 
-            font-size: 1em;
+            font-size: 1rem;
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 500;
-            margin-left: 10px;
             transition: background 0.3s, transform 0.2s;
         }
         button.btn-buscar:hover { 
@@ -97,20 +115,21 @@
             transform: scale(1.03);
         }
 
-        /* Tarjetas de Ejemplos en cuadrícula (4 columnas) */
+        /* Tarjetas de Ejemplos en cuadrícula adaptativa */
         .ejemplos-section { margin-top: 50px; }
-        .ejemplos-section h3 { font-size: 1.4em; color: #a5b4fc; margin-bottom: 25px; }
+        .ejemplos-section h3 { font-size: 1.3rem; color: #a5b4fc; margin-bottom: 25px; }
+        
         .ejemplos-grid { 
-            display: flex; 
-            justify-content: center; 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 20px; 
-            flex-wrap: wrap; 
+            max-width: 1000px;
+            margin: 0 auto;
         }
         .card-ejemplo {
             background: rgba(17, 24, 39, 0.85);
             border: 1px solid #1e1b4b;
             border-radius: 15px;
-            width: 220px;
             cursor: pointer;
             overflow: hidden;
             transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
@@ -126,7 +145,6 @@
             background: rgba(30, 27, 75, 0.9);
         }
         
-        /* Imagen dentro de cada tarjeta */
         .card-img {
             width: 100%;
             height: 120px;
@@ -142,24 +160,72 @@
             justify-content: space-between;
         }
 
-        .card-ejemplo h4 { margin: 0 0 8px 0; color: #818cf8; font-size: 1.15em; }
-        .card-ejemplo p { margin: 0 0 15px 0; font-size: 0.85em; color: #9ca3af; line-height: 1.4; flex-grow: 1; }
-        .card-ejemplo .id-tag { font-family: monospace; background: #030712; padding: 4px 8px; border-radius: 6px; color: #c084fc; font-weight: bold; font-size: 0.85em; display: inline-block; margin-top: auto; }
+        .card-ejemplo h4 { margin: 0 0 8px 0; color: #818cf8; font-size: 1.1rem; }
+        .card-ejemplo p { margin: 0 0 15px 0; font-size: 0.85rem; color: #9ca3af; line-height: 1.4; flex-grow: 1; }
+        .card-ejemplo .id-tag { font-family: monospace; background: #030712; padding: 4px 8px; border-radius: 6px; color: #c084fc; font-weight: bold; font-size: 0.85rem; display: inline-block; margin-top: auto; }
+
+        /* 💡 ESTILOS PARA LOS APARTADOS DESPLEGABLES */
+        .info-desplegables {
+            margin: 50px auto 0 auto;
+            max-width: 800px;
+            text-align: left;
+        }
+        details {
+            background: rgba(17, 24, 39, 0.8);
+            border: 1px solid #1e1b4b;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+        details[open] {
+            border-color: #6366f1;
+        }
+        summary {
+            padding: 16px;
+            font-size: 1.15rem;
+            font-weight: bold;
+            color: #818cf8;
+            cursor: pointer;
+            list-style: none; /* Quita la flecha por defecto en algunos navegadores */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            outline: none;
+            user-select: none;
+        }
+        summary::after {
+            content: "➕";
+            font-size: 0.9rem;
+            transition: transform 0.3s;
+        }
+        details[open] summary::after {
+            content: "➖";
+        }
+        summary:hover {
+            background: rgba(30, 27, 75, 0.5);
+        }
+        .details-content {
+            padding: 0 16px 16px 16px;
+            color: #d1d5db;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
 
         /* Caja de Resultados */
         .result-box { 
             margin-top: 40px; 
-            padding: 25px; 
+            padding: 20px; 
             border: 1px solid #1e1b4b; 
             display: inline-block; 
             background: rgba(17, 24, 39, 0.9); 
             border-radius: 15px; 
-            width: 90%; 
+            width: 100%; 
             max-width: 850px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            box-sizing: border-box;
         }
 
-        /* Botón de limpiar y volver */
         .btn-volver {
             background-color: transparent;
             border: 1px solid #4f46e5;
@@ -170,12 +236,23 @@
             text-decoration: none;
             display: inline-block;
             margin-top: 25px;
-            font-size: 0.9em;
+            font-size: 0.9rem;
             transition: all 0.3s;
         }
         .btn-volver:hover {
             background-color: #4f46e5;
             color: white;
+        }
+
+        /* 📱 OPTIMIZACIONES PARA PANTALLAS MUY PEQUEÑAS (CELULARES) */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            p.subtitulo { font-size: 0.95rem; }
+            .container { padding: 25px 15px; }
+            input { width: 100%; }
+            button.btn-buscar { width: 100%; }
+            .ejemplos-grid { grid-template-columns: 1fr; } /* Un solo cuadrado grande por fila en celular */
+            summary { font-size: 1rem; }
         }
     </style>
 </head>
@@ -183,14 +260,16 @@
     <div class="container">
         <h1>Ecos del Universo: Sonificación de ALeRCE</h1>
         <p class="subtitulo">Escucha la luz de las estrellas y entendamos el cosmos a través del sonido.</p>
-
-        <form method="POST" id="form-busqueda" style="margin-top: 30px;">
+        
+        {% if not oid %}
+        
+        <form method="POST" id="form-busqueda" class="search-box">
             {% csrf_token %}
             <input type="text" id="oid_input" name="oid_busqueda" placeholder="Busca un objeto (Ej: ZTF18accvamy)" required>
             <button type="submit" class="btn-buscar">Generar Sonido</button>
         </form>
 
-        {% if not oid %}
+        
         <div class="ejemplos-section">
             <h3>¿No sabes qué ID buscar? Elige un astro de ejemplo:</h3>
             <div class="ejemplos-grid">
@@ -232,6 +311,24 @@
                 </div>
 
             </div>
+        </div>
+
+        <div class="info-desplegables">
+            
+            <details>
+                <summary>¿Cómo funciona?</summary>
+                <div class="details-content">
+                    <p>La sonificación es una técnica que implica representar datos complejos, como datos científicos, imágenes, texto u otros, a través del sonido. De esta forma, al buscar un cuerpo celeste mediante su ID ZTF, verás su curva de luz y su sonificación. A medida que aumenta el brillo, aumenta el volumen.</p>
+                </div>
+            </details>
+
+            <details>
+                <summary>¿Quiénes somos?</summary>
+                <div class="details-content">
+                    <p>Somos Francisca Barrera Berríos y Montserrat Pardo Figueroa, y juntas, formamos nuestro proyecto “Ecos del Universo” el año 2025. Buscamos transformar datos astrofísicos derivados de señales electromagnéticas en experiencias sonoras de fácil acceso mediante este sitio web, el que pretende convertirse en una herramienta educativa inclusiva que promueva el aprendizaje sobre el universo en contextos escolares diversos.</p>
+                </div>
+            </details>
+
         </div>
         {% endif %}
 
@@ -278,14 +375,17 @@
                     indiceActual = 0;
                 }
 
+                const maxDb = volumenesDb.length > 0 ? Math.max(...volumenesDb) : -6.19;
+
                 for (let i = indiceActual; i < volumenesDb.length; i++) {
                     if (pausarSolicitado) {
                         indiceActual = i;
                         break;
                     }
 
-                    const db = volumenesDb[i];
-                    const volumenLineal = dbToAmp(db);
+                    const dbOriginal = volumenesDb[i];
+                    const dbExagerado = maxDb + ((dbOriginal - maxDb) * 1.8);
+                    const volumenLineal = dbToAmp(dbExagerado);
 
                     const osc = audioCtx.createOscillator();
                     const gainNode = audioCtx.createGain();
@@ -298,11 +398,12 @@
                     
                     gainNode.gain.setValueAtTime(volumenLineal, audioCtx.currentTime);
                     
+                    const duracionNota = 0.05;
                     osc.start();
-                    gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.15);
-                    osc.stop(audioCtx.currentTime + 0.15);
+                    gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duracionNota);
+                    osc.stop(audioCtx.currentTime + duracionNota);
                     
-                    await new Promise(r => setTimeout(r, 120));
+                    await new Promise(r => setTimeout(r, 65));
                 }
 
                 estaReproduciendo = false;
